@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Renovación de Votos - Distrito Tulipán 2</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cinzel:wght@400;600;700&family=Montserrat:wght@300;400;600&display=swap">
+    <!-- html2canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dorado: '#D4AF37',
+                        doradoOscuro: '#AA820A',
+                        crema: '#FAF6EE',
+                        cremaOscuro: '#F0E6D2',
+                        negroElegante: '#121212',
+                        grisElegante: '#2A2A2A',
+                    },
+                    fontFamily: {
+                        cursive: ['"Great Vibes"', 'cursive'],
+                        serifa: ['Cinzel', 'serif'],
+                        sans: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-negroElegante text-crema font-sans min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+
+    <div class="max-w-7xl mx-auto">
+        <!-- Encabezado -->
+        <header class="text-center mb-10">
+            <h1 class="font-serifa text-3xl sm:text-5xl text-dorado font-bold mb-2 tracking-wide">Renovación de Votos Matrimoniales</h1>
+            <p class="font-cursive text-2xl sm:text-3xl text-cremaOscuro">Distrito Tulipán 2</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+            
+            <!-- FORMULARIO DE REGISTRO -->
+            <div class="bg-grisElegante p-6 sm:p-8 rounded-2xl border border-dorado/30 shadow-2xl">
+                <h2 class="font-serifa text-xl text-dorado mb-6 flex items-center gap-2">
+                    <i class="fa-solid fa-pen-to-square"></i> Datos del Registro
+                </h2>
+
+                <form id="registroForm" onsubmit="finalizarRegistro(event)" class="space-y-5">
+                    
+                    <!-- Nombres -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-dorado mb-1">Nombre del Esposo <span class="text-red-400">*</span></label>
+                            <input type="text" id="esposo" required oninput="actualizarInvitacion()" 
+                                placeholder="Nombre completo" 
+                                class="w-full bg-negroElegante border border-dorado/40 rounded-lg px-3 py-2 text-crema focus:outline-none focus:border-dorado">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-dorado mb-1">Nombre de la Esposa <span class="text-red-400">*</span></label>
+                            <input type="text" id="esposa" required oninput="actualizarInvitacion()" 
+                                placeholder="Nombre completo" 
+                                class="w-full bg-negroElegante border border-dorado/40 rounded-lg px-3 py-2 text-crema focus:outline-none focus:border-dorado">
+                        </div>
+                    </div>
+
+                    <!-- Fecha de Matrimonio -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="sm:col-span-1">
+                            <label class="block text-xs uppercase tracking-wider text-dorado mb-1">Fecha de Boda <span class="text-red-400">*</span></label>
+                            <input type="date" id="fechaBoda" required onchange="calcularAniversario()" 
+                                class="w-full bg-negroElegante border border-dorado/40 rounded-lg px-3 py-2 text-crema focus:outline-none focus:border-dorado">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-gray-400 mb-1">Años de Casados</label>
+                            <input type="text" id="anosCasados" readonly placeholder="0 años" 
+                                class="w-full bg-negroElegante/50 border border-gray-700 rounded-lg px-3 py-2 text-dorado font-bold cursor-not-allowed">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-gray-400 mb-1">Tipo de Boda</label>
+                            <input type="text" id="tipoBoda" readonly placeholder="Aniversario" 
+                                class="w-full bg-negroElegante/50 border border-gray-700 rounded-lg px-3 py-2 text-dorado font-bold cursor-not-allowed">
+                        </div>
+                    </div>
+
+                    <!-- Hijos y Nietos con Botones Grandes + / - -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-dorado mb-1">Cantidad de Hijos</label>
+                            <div class="flex items-center">
+                                <button type="button" onclick="cambiarContador('hijos', -1)" 
+                                    class="bg-negroElegante border border-dorado/40 hover:bg-dorado hover:text-negroElegante text-dorado font-bold w-12 h-10 rounded-l-lg flex items-center justify-center text-lg transition">
+                                    <i class="fa-solid fa-minus"></i>
+                                </button>
+                                <input type="number" id="hijos" min="0" value="0" readonly 
+                                    class="w-full bg-negroElegante border-t border-b border-dorado/40 py-2 text-center text-crema font-bold focus:outline-none">
+                                <button type="button" onclick="cambiarContador('hijos', 1)" 
+                                    class="bg-negroElegante border border-dorado/40 hover:bg-dorado hover:text-negroElegante text-dorado font-bold w-12 h-10 rounded-r-lg flex items-center justify-center text-lg transition">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-dorado mb-1">Cantidad de Nietos</label>
+                            <div class="flex items-center">
+                                <button type="button" onclick="cambiarContador('nietos', -1)" 
+                                    class="bg-negroElegante border border-dorado/40 hover:bg-dorado hover:text-negroElegante text-dorado font-bold w-12 h-10 rounded-l-lg flex items-center justify-center text-lg transition">
+                                    <i class="fa-solid fa-minus"></i>
+                                </button>
+                                <input type="number" id="nietos" min="0" value="0" readonly 
+                                    class="w-full bg-negroElegante border-t border-b border-dorado/40 py-2 text-center text-crema font-bold focus:outline-none">
+                                <button type="button" onclick="cambiarContador('nietos', 1)" 
+                                    class="bg-negroElegante border border-dorado/40 hover:bg-dorado hover:text-negroElegante text-dorado font-bold w-12 h-10 rounded-r-lg flex items-center justify-center text-lg transition">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Iglesia y WhatsApp -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-dorado mb-1">Nombre de su Iglesia <span class="text-red-400">*</span></label>
+                            <input type="text" id="iglesia" required oninput="actualizarInvitacion()" 
+                                placeholder="Ej. Iglesia Central" 
+                                class="w-full bg-negroElegante border border-dorado/40 rounded-lg px-3 py-2 text-crema focus:outline-none focus:border-dorado">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-dorado mb-1">WhatsApp (10 dígitos) <span class="text-red-400">*</span></label>
+                            <input type="tel" id="whatsapp" required pattern="[0-9]{10}" maxlength="10" 
+                                placeholder="Ej. 9931234567" 
+                                title="Ingresa exactamente 10 dígitos numéricos"
+                                class="w-full bg-negroElegante border border-dorado/40 rounded-lg px-3 py-2 text-crema focus:outline-none focus:border-dorado">
+                        </div>
+                    </div>
+
+                    <!-- Foto (OBLIGATORIA) -->
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-dorado mb-1">Fotografía de la Pareja <span class="text-red-400">*</span></label>
+                        <input type="file" id="fotoInput" accept="image/*" required onchange="cargarFoto(event)" 
+                            class="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-dorado file:text-negroElegante hover:file:bg-doradoOscuro cursor-pointer">
+                    </div>
+
+                    <!-- Selección de Marco (Circular y Cuadrada únicamente) -->
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-dorado mb-2">Estilo de Marco de Foto</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button type="button" id="btnMarcoCircular" onclick="seleccionarMarco('circular')" 
+                                class="py-2.5 px-4 rounded-xl border-2 border-dorado bg-dorado text-negroElegante font-bold text-xs flex items-center justify-center gap-2 transition shadow-md">
+                                <i class="fa-solid fa-circle"></i> Circular
+                            </button>
+                            <button type="button" id="btnMarcoCuadrada" onclick="seleccionarMarco('cuadrada')" 
+                                class="py-2.5 px-4 rounded-xl border-2 border-dorado/40 bg-negroElegante text-crema font-bold text-xs flex items-center justify-center gap-2 transition hover:border-dorado">
+                                <i class="fa-solid fa-square"></i> Cuadrada
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Comida Vegetariana -->
+                    <div class="p-3 bg-negroElegante/60 rounded-lg border border-dorado/20 space-y-2">
+                        <label class="block text-xs font-semibold text-dorado uppercase tracking-wider">
+                            ¿Te gustaría que la comida fuera vegetariana? <span class="text-red-400">*</span>
+                        </label>
+                        <div class="flex gap-6 pt-1">
+                            <label class="flex items-center gap-2 text-sm text-crema cursor-pointer">
+                                <input type="radio" name="comidaVegetariana" value="Sí" required class="accent-dorado w-4 h-4"> Sí
+                            </label>
+                            <label class="flex items-center gap-2 text-sm text-crema cursor-pointer">
+                                <input type="radio" name="comidaVegetariana" value="No" required class="accent-dorado w-4 h-4"> No
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Aviso de Privacidad -->
+                    <div class="p-3 bg-negroElegante/60 rounded-lg border border-dorado/20 space-y-2">
+                        <label class="flex items-start space-x-3 cursor-pointer">
+                            <input type="checkbox" id="avisoPrivacidad" required onchange="validarAvisoPrivacidad()" 
+                                class="mt-1 w-4 h-4 text-dorado rounded focus:ring-dorado accent-dorado">
+                            <span class="text-xs text-gray-300 leading-relaxed">
+                                Acepto el <strong>Aviso de Privacidad</strong>. Los datos ingresados serán utilizados exclusivamente para la organización de este evento. Mis datos son estrictamente personales y no serán publicados ni compartidos a terceros. <span class="text-red-400">*</span>
+                            </span>
+                        </label>
+                    </div>
+
+                    <!-- Botón Enviar -->
+                    <button type="submit" id="btnSubmit" disabled 
+                        class="w-full bg-gray-600 text-gray-400 font-bold py-3 px-6 rounded-xl shadow-lg cursor-not-allowed transition duration-300 uppercase tracking-wider text-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-heart"></i> Completar Registro
+                    </button>
+                </form>
+            </div>
+
+            <!-- VISTA PREVIA DE LA INVITACIÓN -->
+            <div class="space-y-6 lg:sticky lg:top-8">
+                <div class="text-center">
+                    <span class="text-xs font-semibold tracking-widest text-dorado uppercase bg-dorado/10 px-3 py-1 rounded-full border border-dorado/30">
+                        Vista Previa Dinámica
+                    </span>
+                </div>
+
+                <div id="invitacionCard" class="bg-crema text-negroElegante p-6 sm:p-8 rounded-2xl shadow-2xl border-4 border-dorado relative overflow-hidden text-center max-w-md mx-auto">
+                    <div class="absolute top-2 left-2 text-dorado text-xl"><i class="fa-solid fa-bookmark"></i></div>
+                    <div class="absolute top-2 right-2 text-dorado text-xl"><i class="fa-solid fa-bookmark"></i></div>
+
+                    <p class="font-serifa text-xs uppercase tracking-widest text-gray-600 mb-1">Nuestra Renovación de Votos</p>
+                    <p id="cardTipoBoda" class="font-cursive text-3xl text-doradoOscuro font-bold mb-3">Bodas de Aniversario</p>
+
+                    <div class="my-4 flex justify-center items-center">
+                        <div id="marcoFotoContainer" class="w-48 h-48 bg-cremaOscuro flex items-center justify-center border-2 border-dorado shadow-lg overflow-hidden rounded-full transition-all duration-300">
+                            <img id="cardFoto" src="https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80&w=400&auto=format&fit=crop" 
+                                alt="Foto de pareja" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+
+                    <div class="my-3 space-y-1">
+                        <h3 id="cardEsposo" class="font-serifa text-lg font-bold text-negroElegante">Nombre del Esposo</h3>
+                        <p class="font-cursive text-2xl text-dorado font-bold">&</p>
+                        <h3 id="cardEsposa" class="font-serifa text-lg font-bold text-negroElegante">Nombre de la Esposa</h3>
+                    </div>
+
+                    <div class="w-24 h-0.5 bg-dorado mx-auto my-3"></div>
+
+                    <p id="cardAnos" class="text-xs font-semibold text-gray-700">Años de Bendición Juntos</p>
+                    
+                    <div id="cardFamilia" class="text-xs text-gray-600 my-2 hidden">
+                        <span id="cardHijos" class="hidden"></span>
+                        <span id="cardSeparador" class="hidden"> • </span>
+                        <span id="cardNietos" class="hidden"></span>
+                    </div>
+
+                    <p id="cardIglesia" class="text-xs italic text-gray-600 my-1">Iglesia: No especificada</p>
+
+                    <div class="mt-4 pt-3 border-t border-dorado/30 text-xs font-serifa space-y-1 text-gray-800">
+                        <p class="font-bold text-doradoOscuro"><i class="fa-solid fa-calendar-day"></i> Sábado 21 de Noviembre</p>
+                        <p><i class="fa-solid fa-clock"></i> 3:00 PM</p>
+                        <p><i class="fa-solid fa-church"></i> Iglesia de Ahogatoro</p>
+                    </div>
+
+                    <p class="font-cursive text-lg text-doradoOscuro mt-3">"El amor nunca deja de ser"</p>
+                </div>
+
+                <!-- SECCIÓN FINAL -->
+                <div id="seccionFinal" class="hidden bg-grisElegante p-6 rounded-2xl border border-dorado/40 shadow-xl text-center space-y-5">
+                    
+                    <div class="p-4 bg-green-900/30 border border-green-500/50 rounded-xl text-green-300 text-sm">
+                        <i class="fa-solid fa-circle-check text-green-400 text-2xl mb-1"></i><br>
+                        <strong class="text-base">¡Muchas gracias por hacer tu registro!</strong><br>
+                        Tu información ha sido capturada correctamente para este hermoso evento.
+                    </div>
+
+                    <div class="p-4 bg-negroElegante rounded-xl border border-dorado/40 text-left space-y-2">
+                        <p class="text-xs text-dorado font-bold uppercase tracking-wider"><i class="fa-solid fa-share-nodes"></i> Permiso de Publicación: <span class="text-red-400">*</span></p>
+                        <p class="text-xs text-gray-300 leading-relaxed">¿Nos autorizas a publicar esta invitación/foto en las redes sociales y página oficial del <strong>Distrito Tulipán 2</strong>?</p>
+                        <div class="flex gap-6 pt-2">
+                            <label class="flex items-center gap-2 text-xs text-crema cursor-pointer">
+                                <input type="radio" name="permisoPublicacion" value="Sí" required onchange="validarPermisoPublicacion()" class="accent-dorado w-4 h-4"> Sí, autorizo
+                            </label>
+                            <label class="flex items-center gap-2 text-xs text-crema cursor-pointer">
+                                <input type="radio" name="permisoPublicacion" value="No" required onchange="validarPermisoPublicacion()" class="accent-dorado w-4 h-4"> No autorizo
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3 pt-2">
+                        <button id="btnDescargar" disabled onclick="descargarInvitacion()" 
+                            class="w-full bg-gray-600 text-gray-400 font-bold py-3 px-4 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-lg cursor-not-allowed">
+                            <i class="fa-solid fa-download text-base"></i> Guardar / Descargar Invitación
+                        </button>
+
+                        <button onclick="registrarOtraPareja()" 
+                            class="w-full bg-negroElegante hover:bg-black border border-dorado/60 text-dorado font-bold py-3 px-4 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-lg">
+                            <i class="fa-solid fa-user-plus text-base"></i> Registrar Otra Pareja
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS DE CONEXIÓN -->
+    <script>
+        const IMGBB_API_KEY = '3fd6d6924fa3188577aca199a2eff9bf';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxicz3DWpigMbUjMcJVF2wRfBsgHCDz5jjQwbQK8t-b39J_vFaRvEdav9S8geqHD5t-/exec';
+
+        let fotoArchivo = null;
+
+        function cambiarContador(id, delta) {
+            const input = document.getElementById(id);
+            let val = parseInt(input.value) || 0;
+            val = Math.max(0, val + delta);
+            input.value = val;
+            actualizarInvitacion();
+        }
+
+        function validarAvisoPrivacidad() {
+            const aviso = document.getElementById('avisoPrivacidad').checked;
+            const btnSubmit = document.getElementById('btnSubmit');
+
+            if (aviso) {
+                btnSubmit.disabled = false;
+                btnSubmit.className = "w-full bg-gradient-to-r from-dorado via-yellow-500 to-doradoOscuro text-negroElegante font-bold py-3 px-6 rounded-xl shadow-lg hover:brightness-110 transition duration-300 uppercase tracking-wider text-sm flex items-center justify-center gap-2 cursor-pointer";
+            } else {
+                btnSubmit.disabled = true;
+                btnSubmit.className = "w-full bg-gray-600 text-gray-400 font-bold py-3 px-6 rounded-xl shadow-lg cursor-not-allowed transition duration-300 uppercase tracking-wider text-sm flex items-center justify-center gap-2";
+            }
+        }
+
+        function validarPermisoPublicacion() {
+            const permiso = document.querySelector('input[name="permisoPublicacion"]:checked');
+            const btnDescargar = document.getElementById('btnDescargar');
+
+            if (permiso) {
+                btnDescargar.disabled = false;
+                btnDescargar.className = "w-full bg-gradient-to-r from-dorado via-yellow-500 to-doradoOscuro hover:brightness-110 text-negroElegante font-bold py-3 px-4 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-lg cursor-pointer";
+            }
+        }
+
+        function calcularAniversario() {
+            const fechaBodaInput = document.getElementById('fechaBoda').value;
+            if (!fechaBodaInput) return;
+
+            const fechaBoda = new Date(fechaBodaInput);
+            const hoy = new Date();
+
+            let anos = hoy.getFullYear() - fechaBoda.getFullYear();
+            const mesDiff = hoy.getMonth() - fechaBoda.getMonth();
+            
+            if (mesDiff < 0 || (mesDiff === 0 && hoy.getDate() < fechaBoda.getDate())) {
+                anos--;
+            }
+
+            anos = Math.max(0, anos);
+            document.getElementById('anosCasados').value = `${anos} años`;
+
+            let tipo = "Bodas de Aniversario";
+            if (anos === 1) tipo = "Bodas de Papel";
+            else if (anos === 5) tipo = "Bodas de Madera";
+            else if (anos === 10) tipo = "Bodas de Aluminio";
+            else if (anos === 15) tipo = "Bodas de Cristal";
+            else if (anos === 20) tipo = "Bodas de Porcelana";
+            else if (anos === 25) tipo = "Bodas de Plata";
+            else if (anos === 30) tipo = "Bodas de Perla";
+            else if (anos === 35) tipo = "Bodas de Coral";
+            else if (anos === 40) tipo = "Bodas de Rubí";
+            else if (anos === 45) tipo = "Bodas de Zafiro";
+            else if (anos === 50) tipo = "Bodas de Oro";
+            else if (anos === 55) tipo = "Bodas de Esmeralda";
+            else if (anos >= 60) tipo = "Bodas de Diamante";
+
+            document.getElementById('tipoBoda').value = tipo;
+            actualizarInvitacion();
+        }
+
+        function actualizarInvitacion() {
+            const esposo = document.getElementById('esposo').value || 'Nombre del Esposo';
+            const esposa = document.getElementById('esposa').value || 'Nombre de la Esposa';
+            const anos = document.getElementById('anosCasados').value || '0 años';
+            const tipoBoda = document.getElementById('tipoBoda').value || 'Bodas de Aniversario';
+            const iglesia = document.getElementById('iglesia').value || 'No especificada';
+            const hijos = parseInt(document.getElementById('hijos').value) || 0;
+            const nietos = parseInt(document.getElementById('nietos').value) || 0;
+
+            document.getElementById('cardEsposo').innerText = esposo;
+            document.getElementById('cardEsposa').innerText = esposa;
+            document.getElementById('cardTipoBoda').innerText = tipoBoda;
+            document.getElementById('cardAnos').innerText = `${anos} de Amor y Bendición`;
+            document.getElementById('cardIglesia').innerText = `Iglesia: ${iglesia}`;
+
+            const cardFamilia = document.getElementById('cardFamilia');
+            const cardHijos = document.getElementById('cardHijos');
+            const cardNietos = document.getElementById('cardNietos');
+            const cardSeparador = document.getElementById('cardSeparador');
+
+            if (hijos > 0 || nietos > 0) {
+                cardFamilia.classList.remove('hidden');
+
+                if (hijos > 0) {
+                    cardHijos.innerText = `${hijos} ${hijos === 1 ? 'Hijo' : 'Hijos'}`;
+                    cardHijos.classList.remove('hidden');
+                } else {
+                    cardHijos.classList.add('hidden');
+                }
+
+                if (nietos > 0) {
+                    cardNietos.innerText = `${nietos} ${nietos === 1 ? 'Nieto' : 'Nietos'}`;
+                    cardNietos.classList.remove('hidden');
+                } else {
+                    cardNietos.classList.add('hidden');
+                }
+
+                if (hijos > 0 && nietos > 0) {
+                    cardSeparador.classList.remove('hidden');
+                } else {
+                    cardSeparador.classList.add('hidden');
+                }
+            } else {
+                cardFamilia.classList.add('hidden');
+            }
+        }
+
+        function cargarFoto(event) {
+            fotoArchivo = event.target.files[0];
+            if (fotoArchivo) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('cardFoto').src = e.target.result;
+                }
+                reader.readAsDataURL(fotoArchivo);
+            }
+        }
+
+        function seleccionarMarco(tipo) {
+            const container = document.getElementById('marcoFotoContainer');
+            const btnCircular = document.getElementById('btnMarcoCircular');
+            const btnCuadrada = document.getElementById('btnMarcoCuadrada');
+
+            if (tipo === 'circular') {
+                container.className = "w-48 h-48 bg-cremaOscuro flex items-center justify-center border-2 border-dorado shadow-lg overflow-hidden rounded-full transition-all duration-300";
+                btnCircular.className = "py-2.5 px-4 rounded-xl border-2 border-dorado bg-dorado text-negroElegante font-bold text-xs flex items-center justify-center gap-2 transition shadow-md";
+                btnCuadrada.className = "py-2.5 px-4 rounded-xl border-2 border-dorado/40 bg-negroElegante text-crema font-bold text-xs flex items-center justify-center gap-2 transition hover:border-dorado";
+            } else {
+                container.className = "w-48 h-48 bg-cremaOscuro flex items-center justify-center border-2 border-dorado shadow-lg overflow-hidden rounded-2xl transition-all duration-300";
+                btnCuadrada.className = "py-2.5 px-4 rounded-xl border-2 border-dorado bg-dorado text-negroElegante font-bold text-xs flex items-center justify-center gap-2 transition shadow-md";
+                btnCircular.className = "py-2.5 px-4 rounded-xl border-2 border-dorado/40 bg-negroElegante text-crema font-bold text-xs flex items-center justify-center gap-2 transition hover:border-dorado";
+            }
+        }
+
+        async function finalizarRegistro(e) {
+            e.preventDefault();
+
+            const btnSubmit = document.getElementById('btnSubmit');
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando registro...';
+
+            let fotoUrl = '';
+
+            if (fotoArchivo) {
+                const formData = new FormData();
+                formData.append('image', fotoArchivo);
+
+                try {
+                    const respImg = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const resJson = await respImg.json();
+                    if (resJson.success) {
+                        fotoUrl = resJson.data.url;
+                    }
+                } catch (err) {
+                    console.error("Error al subir a ImgBB:", err);
+                }
+            }
+
+            const datosPayload = {
+                esposo: document.getElementById('esposo').value,
+                esposa: document.getElementById('esposa').value,
+                fechaBoda: document.getElementById('fechaBoda').value,
+                anosCasados: document.getElementById('anosCasados').value,
+                tipoBoda: document.getElementById('tipoBoda').value,
+                hijos: document.getElementById('hijos').value,
+                nietos: document.getElementById('nietos').value,
+                iglesia: document.getElementById('iglesia').value,
+                whatsapp: document.getElementById('whatsapp').value,
+                comidaVegetariana: document.querySelector('input[name="comidaVegetariana"]:checked')?.value || "No",
+                permisoPublicacion: document.querySelector('input[name="permisoPublicacion"]:checked')?.value || "No especificado",
+                fotoUrl: fotoUrl
+            };
+
+            if (GOOGLE_SCRIPT_URL) {
+                try {
+                    await fetch(GOOGLE_SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(datosPayload)
+                    });
+                } catch (err) {
+                    console.error("Error al enviar a Google Sheets:", err);
+                }
+            }
+
+            btnSubmit.innerHTML = '<i class="fa-solid fa-heart"></i> Completar Registro';
+            document.getElementById('seccionFinal').classList.remove('hidden');
+            document.getElementById('seccionFinal').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function descargarInvitacion() {
+            const card = document.getElementById('invitacionCard');
+            html2canvas(card, { scale: 3, useCORS: true, backgroundColor: null }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const link = document.createElement('a');
+                link.download = 'Invitacion-Renovacion-Votos-DistritoTulipan2.png';
+                link.href = imgData;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+        }
+
+        function registrarOtraPareja() {
+            document.getElementById('registroForm').reset();
+            fotoArchivo = null;
+            document.getElementById('anosCasados').value = '';
+            document.getElementById('tipoBoda').value = '';
+            document.getElementById('hijos').value = '0';
+            document.getElementById('nietos').value = '0';
+            document.getElementById('cardFoto').src = "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80&w=400&auto=format&fit=crop";
+            
+            document.getElementById('seccionFinal').classList.add('hidden');
+            validarAvisoPrivacidad();
+            seleccionarMarco('circular');
+            actualizarInvitacion();
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
